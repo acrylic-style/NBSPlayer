@@ -13,6 +13,7 @@ import xyz.acrylicstyle.tomeito_api.nbs.v4.BukkitNBS4Reader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayMusicCommand implements CommandExecutor {
     @SuppressWarnings("deprecation")
@@ -42,10 +43,15 @@ public class PlayMusicCommand implements CommandExecutor {
         try {
             BukkitNBSFile nbs = reader.read(file);
             sender.sendMessage(ChatColor.GREEN + "Loaded " + args[0] + ", playing it...");
+            AtomicBoolean cancelled = new AtomicBoolean(false);
             nbs.getBukkitTicks().forEach(tick -> new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (!player.isOnline()) return;
+                    if (cancelled.get()) return;
+                    if (!player.isOnline()) {
+                        cancelled.set(true);
+                        return;
+                    }
                     tick.getBukkitLayers().forEach(note -> {
                         if (note != null) player.playSound(player.getLocation(), note.getSound(), note.getVolume(), note.getSoundPitch());
                     });
