@@ -16,6 +16,12 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayMusicCommand implements CommandExecutor {
+    private final boolean everyoneIsDJ;
+
+    public PlayMusicCommand(boolean everyoneIsDJ) {
+        this.everyoneIsDJ = everyoneIsDJ;
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -23,13 +29,13 @@ public class PlayMusicCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "Pineapple for dinner!");
             return true;
         }
-        if (!sender.isOp()) return true;
+        if (!everyoneIsDJ && !sender.isOp()) return true;
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "/playmusic <name>");
             return true;
         }
         Player player;
-        if (args.length > 1) {
+        if (sender.isOp() && args.length > 1) {
             player = Bukkit.getPlayerExact(args[1]);
         } else {
             player = (Player) sender;
@@ -52,9 +58,7 @@ public class PlayMusicCommand implements CommandExecutor {
                         cancelled.set(true);
                         return;
                     }
-                    tick.getBukkitLayers().forEach(note -> {
-                        if (note != null) player.playSound(player.getLocation(), note.getSound(), note.getVolume(), note.getSoundPitch());
-                    });
+                    tick.getPlayableBukkitLayers().forEach(note -> player.playSound(player.getLocation(), note.getSound(), note.getVolume() / 100F, note.getSoundPitch()));
                 }
             }.runTaskLater(TomeitoAPI.getInstance(), tick.getTick()));
         } catch (IOException e) {
