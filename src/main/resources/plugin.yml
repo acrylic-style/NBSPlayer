@@ -1,0 +1,7 @@
+name: NBSPlayer
+main: xyz.acrylicstyle.nbsPlayer.NBSPlayerPlugin
+version: "1.0"
+api-version: "1.13"
+commands:
+  playmusic:
+    description: ""
