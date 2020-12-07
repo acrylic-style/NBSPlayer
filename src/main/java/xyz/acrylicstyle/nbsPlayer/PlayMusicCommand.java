@@ -1,5 +1,6 @@
 package xyz.acrylicstyle.nbsPlayer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class PlayMusicCommand implements CommandExecutor {
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -25,6 +27,12 @@ public class PlayMusicCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "/playmusic <name>");
             return true;
         }
+        Player player;
+        if (args.length > 1) {
+            player = Bukkit.getPlayerExact(args[1]);
+        } else {
+            player = (Player) sender;
+        }
         File file = new File("./plugins/NBSPlayer/musics/" + args[0].replaceAll("[/\\\\]", "_") + ".nbs");
         if (!file.exists()) {
             sender.sendMessage(ChatColor.RED + "File '" + file.getAbsolutePath() + "' does not exist!");
@@ -32,12 +40,12 @@ public class PlayMusicCommand implements CommandExecutor {
         }
         BukkitNBS4Reader reader = new BukkitNBS4Reader();
         try {
-            Player player = (Player) sender;
             BukkitNBSFile nbs = reader.read(file);
             sender.sendMessage(ChatColor.GREEN + "Loaded " + args[0] + ", playing it...");
             nbs.getBukkitTicks().forEach(tick -> new BukkitRunnable() {
                 @Override
                 public void run() {
+                    if (!player.isOnline()) return;
                     tick.getBukkitLayers().forEach(note -> {
                         if (note != null) player.playSound(player.getLocation(), note.getSound(), note.getVolume(), note.getSoundPitch());
                     });
