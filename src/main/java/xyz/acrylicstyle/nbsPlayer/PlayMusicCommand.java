@@ -42,7 +42,7 @@ public class PlayMusicCommand implements CommandExecutor {
         }
         File file = new File("./plugins/NBSPlayer/musics/" + args[0].replaceAll("[/\\\\]", "_") + ".nbs");
         if (!file.exists()) {
-            sender.sendMessage(ChatColor.RED + "File '" + file.getAbsolutePath() + "' does not exist!");
+            if (player.isOp()) sender.sendMessage(ChatColor.RED + "File '" + file.getAbsolutePath() + "' does not exist!");
             return true;
         }
         BukkitNBS4Reader reader = new BukkitNBS4Reader();
