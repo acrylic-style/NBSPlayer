@@ -26,7 +26,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>api</artifactId>
-            <version>0.6.5d</version>
+            <version>0.7.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

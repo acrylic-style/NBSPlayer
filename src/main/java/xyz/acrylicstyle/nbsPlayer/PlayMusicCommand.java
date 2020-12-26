@@ -58,9 +58,7 @@ public class PlayMusicCommand implements CommandExecutor {
                         cancelled.set(true);
                         return;
                     }
-                    tick.getPlayableBukkitLayers().forEach(note -> {
-                        if (note.getSound() != null && note.getVolume() != 0) player.playSound(player.getLocation(), note.getSound(), note.getVolume() / 100F, note.getSoundPitch());
-                    });
+                    tick.getPlayableBukkitLayers().forEach(note -> note.play(player));
                 }
             }.runTaskLater(TomeitoAPI.getInstance(), tick.getTick()));
         } catch (IOException e) {
